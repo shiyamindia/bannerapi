@@ -14,4 +14,4 @@ class CaldTests(SimpleTestCase):
 
         result = calc.add(5, 6)
 
-        self.assertEqual(result, 12)
+        self.assertEqual(result, 11)
