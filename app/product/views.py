@@ -29,3 +29,8 @@ class ProductViewSet(viewsets.ModelViewSet):
             return serializers.ProductSerializer
 
         return self.serializer_class
+
+    def perform_create(self, serializer):
+        """ Create new product using Save hooks from Mixin classes """
+
+        serializer.save(user=self.request.user)

@@ -110,6 +110,7 @@ class PrivateProductApiTests(TestCase):
             'name' : 'testname',
             'sku' : 'testsku1',
             'price': Decimal('35.50'),
+            'is_giftcard':False,
         }
 
         res = self.client.post(PRODUCT_URL, payload)
