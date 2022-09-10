@@ -7,15 +7,23 @@ from decimal import Decimal
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
+from bannerapi.app.product import serializers, urls
 
 from rest_framework import status
 from rest_framework.test import APIClient
 
 from core.models import Product
 
-from product.serializers import ProductSerializer
+from product.serializers import (
+    ProductSerializer,
+    ProductDetailSerializer,
+)
 
 PRODUCT_URL = reverse('product:product-list')
+
+def detail_url(product_id):
+    """ Craete and return the product detail URL """
+    return reverse('product:product-detail', args=[product_id])
 
 def create_product(user, **params):
     """ Create and retuen the sample product """
@@ -84,3 +92,14 @@ class PrivateProductApiTests(TestCase):
         serializer= ProductSerializer(product, many=True)
         self.assertEquals(result.status_code, status.HTTP_200_OK)
         self.assertEquals(result.data, serializer.data)
+
+    def test_get_product_details(self):
+        """ test for getting product details """
+
+        product= create_product(self.user)
+
+        url = detail_url(product.id)
+        res = self.client.get(url)
+
+        serializer = ProductDetailSerializer(product)
+        self.assertEquals(res.data, serializer.data)
