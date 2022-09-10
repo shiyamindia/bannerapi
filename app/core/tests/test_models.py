@@ -1,9 +1,12 @@
 """
 Tests for models
 """
-import email
+from decimal import Decimal
+import decimal
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+
+from core import models
 
 class ModelTests(TestCase):
     """ test models """
@@ -30,4 +33,23 @@ class ModelTests(TestCase):
 
         self.assertTrue(user.is_superuser)
         self.assertTrue(user.is_staff)
+
+    def test_create_product(self):
+        """ test for creating product successfully """
+
+        user = get_user_model().objects.create_user(
+            'testproduct@example.com',
+            'testproduct'
+        )
+
+        product = models.Product.objects.create(
+            user=user,
+            name='testproduct1',
+            sku='test00001',
+            price= Decimal('25.60'),
+            description='test product description',
+            is_giftcard=True,
+        )
+
+        self.assertEquals(str(product), product.name)
 
