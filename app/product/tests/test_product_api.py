@@ -39,6 +39,11 @@ def create_product(user, **params):
     product = Product.objects.create(user=user, **defaults)
     return product
 
+def create_user(**params):
+    """ Create and return new users """
+    return get_user_model().objects.create_user(**params)
+
+
 class PublicProductAPITests(TestCase):
     """ Test unauthencated API request """
 
@@ -57,10 +62,7 @@ class PrivateProductApiTests(TestCase):
 
     def setUp(self):
         self.client= APIClient()
-        self.user = get_user_model().objects.create_user(
-            'user@example.com',
-            'testpass123',
-        )
+        self.user = create_user(email='user@example.com', password = 'testpass123')
         self.client.force_authenticate(self.user)
 
     def test_retrieve_product_list(self):
@@ -78,10 +80,7 @@ class PrivateProductApiTests(TestCase):
 
     def test_product_list_limited_to_user(self):
         """ Test for getting product list for limited base on user """
-        other_user = get_user_model().objects.create_user(
-            'other@example.com',
-            'otherpass'
-        )
+        other_user = create_user(email ='other@example.com',password ='otherpass')
         create_product(user=other_user)
         create_product(user=self.user)
 
@@ -120,3 +119,13 @@ class PrivateProductApiTests(TestCase):
         for key, value in payload.items():
             self.assertEquals(getattr(product, key), value)
         self.assertEquals(product.user, self.user)
+
+    def test_delete_product(self):
+        """ test for deleting the product """
+        product = create_product(user=self.user)
+
+        url = detail_url(product.id)
+        res = self.client.delete(url)
+
+        self.assertEquals(res.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Product.objects.filter(id=product.id).exists())
