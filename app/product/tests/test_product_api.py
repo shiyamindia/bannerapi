@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
-from rest_framwork import status
+from rest_framework import status
 from rest_framework.test import APIClient
 
 from core.models import Product
@@ -64,7 +64,7 @@ class PrivateProductApiTests(TestCase):
 
         result = self.client.get(PRODUCT_URL)
 
-        product = Product.objects.all().order_by('_id')
+        product = Product.objects.all().order_by('-id')
         serializer= ProductSerializer(product, many=True)
         self.assertEquals(result.status_code, status.HTTP_200_OK)
         self.assertEquals(result.data, serializer.data)
