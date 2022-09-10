@@ -7,7 +7,6 @@ from decimal import Decimal
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
-from bannerapi.app.product import serializers, urls
 
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -19,11 +18,11 @@ from product.serializers import (
     ProductDetailSerializer,
 )
 
-PRODUCT_URL = reverse('product:product-list')
+PRODUCT_URL = reverse('products:product-list')
 
 def detail_url(product_id):
     """ Craete and return the product detail URL """
-    return reverse('product:product-detail', args=[product_id])
+    return reverse('products:product-detail', args=[product_id])
 
 def create_product(user, **params):
     """ Create and retuen the sample product """

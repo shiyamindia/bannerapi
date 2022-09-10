@@ -12,12 +12,20 @@ from product import serializers
 class ProductViewSet(viewsets.ModelViewSet):
     """ View for manage product APIs """
 
-    serializer_class = serializers.ProductSerializer
+    serializer_class = serializers.ProductDetailSerializer
     queryset = Product.objects.all()
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         """ Retrieve products for authenticated users && Deriving base queryset method """
 
         return self.queryset.filter(user=self.request.user).order_by('-id')
+
+    def get_serializer_class(self):
+        """ return the serializer based on request """
+
+        if self.action == 'list':
+            return serializers.ProductSerializer
+
+        return self.serializer_class
